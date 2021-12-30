@@ -91,9 +91,10 @@ inline bool Set(v8::Local<v8::Context> context,
 template<typename Dict, typename Key, typename Value, typename... ArgTypes>
 inline bool Set(v8::Local<v8::Context> context, Dict dict,
                 Key&& key, Value&& value, ArgTypes&&... args) {
-  return Set(context, dict,
-             std::forward<Key>(key), std::forward<Value>(value)) &
-         Set(context, dict, std::forward<ArgTypes>(args)...);
+  bool result = Set(context, dict,
+                    std::forward<Key>(key), std::forward<Value>(value));
+  result &= Set(context, dict, std::forward<ArgTypes>(args)...);
+  return result;
 }
 
 // Helper for getting from Object.
@@ -111,8 +112,9 @@ inline bool Get(v8::Local<v8::Context> context, v8::Local<v8::Object> object,
 template<typename Key, typename Value, typename... ArgTypes>
 inline bool Get(v8::Local<v8::Context> context, v8::Local<v8::Object> object,
                 Key&& key, Value* out, ArgTypes&&... args) {
-  return Get(context, object, std::forward<Key>(key), out) &
-         Get(context, object, std::forward<ArgTypes>(args)...);
+  bool result = Get(context, object, std::forward<Key>(key), out);
+  result &= Get(context, object, std::forward<ArgTypes>(args)...);
+  return result;
 }
 
 // Return a hidden map attached to object.
